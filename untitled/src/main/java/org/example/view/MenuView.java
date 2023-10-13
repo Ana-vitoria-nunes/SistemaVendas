@@ -3,10 +3,9 @@ package org.example.view;
 import org.example.controller.CartaoController;
 import org.example.controller.ClienteController;
 import org.example.controller.PagamentoController;
-import org.example.controller.excecao.MaioDeIdade;
-import org.example.controller.validação.ValidarCartao;
-import org.example.controller.validação.ValidarEmail;
-import org.example.controller.validação.ValidarUser;
+import org.example.controller.validacao.ValidarCartao;
+import org.example.controller.validacao.ValidarEmail;
+import org.example.controller.validacao.ValidarUser;
 import org.example.model.CartaoModel;
 import org.example.model.Cliente;
 import org.example.model.InputUser;
@@ -16,6 +15,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -40,7 +40,7 @@ public class MenuView {
         System.out.println("1 - Logar.");
         System.out.println("2 - Cadastrar.");
     }
-    public void casePrincipal() throws MaioDeIdade, ParseException {
+    public void casePrincipal()  {
         int option;
         do {
             MenuPrincipal();
@@ -155,23 +155,26 @@ public class MenuView {
         String nomeRemetente = inputUser.readStringFromUser("Nome do Remetente: ");
         String numeroCartao = inputUser.readStringFromUser("Número do Cartão: ");
         String cvvCartao = inputUser.readStringFromUser("CVV do Cartão: ");
+        String dataValidadeStr =inputUser.readStringFromUser("Data de Validade (MM/yyyy): ");
 
-        System.out.print("Data de Validade (MM/yyyy): ");
-        String dataValidadeStr = scanner.next();
-        Date dataDevalidade;
+// Formate a data de entrada no formato "yyyy-MM" que o PostgreSQL entende
+        SimpleDateFormat dateFormatInput = new SimpleDateFormat("MM/yyyy");
+        SimpleDateFormat dateFormatOutput = new SimpleDateFormat("yyyy-MM");
+        Date dataDeValidade;
 
         try {
-            dataDevalidade = new SimpleDateFormat("MM/yyyy").parse(dataValidadeStr);
+            dataDeValidade = dateFormatOutput.parse(dateFormatOutput.format(dateFormatInput.parse(dataValidadeStr)));
         } catch (ParseException e) {
             System.out.println("Formato de data de validade inválido. Use MM/yyyy.");
             return;
         }
 
+
         System.out.print("Limite do Cartão: ");
         BigDecimal limiteCartao = scanner.nextBigDecimal();
-        cartaoService.adicionarCartao((long) idCliente, nomeRemetente, numeroCartao, cvvCartao, dataDevalidade, limiteCartao);
+        cartaoService.adicionarCartao((long) idCliente, nomeRemetente, numeroCartao, cvvCartao, dataDeValidade, limiteCartao);
     }
-    public void cadastrar() throws ParseException, MaioDeIdade {
+    public void cadastrar() {
         String nome = inputUser.readStringFromUser("Qual seu nome completo:");
         String dataNascimento = inputUser.readStringFromUser("Qual sua data de nascimento (DD/MM/yyyy)");
         String email = inputUser.readStringFromUser("Qual seu e-mail:");
@@ -180,9 +183,9 @@ public class MenuView {
         String endereco = inputUser.readStringFromUser("Qual seu endereço:");
         String telefone = inputUser.readStringFromUser("Qual seu telefone para contato:");
 
-        Date dataDeNasc;
-        dataDeNasc = new SimpleDateFormat("dd/MM/yyyy").parse(dataNascimento);
-        // Defina um loop para garantir que o usuário forneça uma entrada válida
+        LocalDate dataDeNasc = LocalDate.parse(dataNascimento, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        Date dataDeNascComoDate = java.sql.Date.valueOf(dataDeNasc);
+
         while (true) {
             if (validarEmail.validarEmail(email)) {
                 userModel.setNomeCompleto(nome);
@@ -191,7 +194,7 @@ public class MenuView {
                 userModel.setCpf(cpf);
                 userModel.setEndereco(endereco);
                 userModel.setTelefone(telefone);
-                userModel.setDataNascimento(LocalDate.parse(dataNascimento));
+                userModel.setDataNascimento(dataDeNascComoDate);
 
                 userService.adicionarUsuario(userModel.getNomeCompleto(),userModel.getDataNascimento(), userModel.getEmail(),
                         userModel.getSenha(), userModel.getCpf(), userModel.getEndereco(), userModel.getTelefone());

@@ -1,4 +1,4 @@
-package org.example.controller.validação;
+package org.example.controller.validacao;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

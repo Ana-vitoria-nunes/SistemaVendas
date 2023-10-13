@@ -1,20 +1,18 @@
-package org.example.controller.validação;
+package org.example.controller.validacao;
 
 import org.example.connection.Connect;
-import org.example.controller.excecao.MaioDeIdade;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.Period;
+import java.util.Date;
 
 public class ValidarUser {
 
     private final Connection connection = Connect.fazerConexao();
     public boolean validarUserCredenciais(String email, String senha) {
-        String sql = "SELECT COUNT(*) FROM \"user\" WHERE email = ? AND senha = ?";
+        String sql = "SELECT COUNT(*) FROM cliente WHERE email = ? AND senha = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -35,7 +33,7 @@ public class ValidarUser {
         return false;
     }
     public boolean validarUser(Long id) {
-        String sql = "SELECT COUNT(*) FROM \"user\" WHERE id=?";
+        String sql = "SELECT COUNT(*) FROM cliente WHERE idCliente=?";
 
         try {
             assert connection != null;
@@ -66,16 +64,16 @@ public class ValidarUser {
          }
 
          //método não testado
-         public static void validarDataNascimento (LocalDate dataNascimento) throws MaioDeIdade {
-            LocalDate dataHoje = LocalDate.now();
+         public static boolean validarDataNascimento(Date dataNascimento){
+             Date dataHoje = new Date(); // Data atual
 
-             Period period = Period.between(dataNascimento, dataHoje);
-             if (period.getYears() <=18) {
-                 throw new MaioDeIdade("Você precisa ser maior de idade");
-             }
+             // Calculando a idade
+             long diff = dataHoje.getTime() - dataNascimento.getTime();
+             long idadeEmMillis = diff / (1000L * 60 * 60 * 24 * 365); // Aproximação simples da idade em anos
+             return idadeEmMillis < 18;
          }
     public String userInfoByAlias(String email) {
-        String sql = "SELECT id, nomecompleto, cpf FROM \"user\" WHERE email=?";
+        String sql = "SELECT idCliente, nomecompleto, cpf FROM cliente WHERE email=?";
 
         String nome = "";
         try {
@@ -84,7 +82,7 @@ public class ValidarUser {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                int id = resultSet.getInt("id");
+                int id = resultSet.getInt("idCliente");
                 nome = resultSet.getString("nomecompleto");
                 String cpf = resultSet.getString("cpf");
                 System.out.println("Informações da Conta:\n ID: " + id + " | CPF: " + cpf + " | Nome: " + nome + " | Email: " + email);
@@ -101,13 +99,13 @@ public class ValidarUser {
     }
     public Long getClienteId(String email) {
         try {
-            String sql = "SELECT id FROM \"user\" WHERE email =?";
+            String sql = "SELECT idCliente FROM cliente WHERE email =?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, email);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getLong("id");
+                return resultSet.getLong("idCliente");
             } else {
                 return null;
             }

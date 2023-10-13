@@ -6,13 +6,13 @@ import java.sql.SQLException;
 
 public class Connect {
     public static Connection fazerConexao() {
-        try {
-            Connection conexao = DriverManager.getConnection("jdbc:postgresql://isabelle.db.elephantsql.com:5432/zkaavvok",
-                    "zkaavvok", "0XA3cRnVL1GYiaVdk6NzmMZ_ynPEG5PQ");
-            return conexao;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            try {
+                Connection conexao = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sistema_dividas",
+                        "postgres", "123456");
+                return conexao;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
-    }
 }
