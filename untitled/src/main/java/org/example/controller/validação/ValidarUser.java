@@ -3,7 +3,6 @@ package org.example.controller.validação;
 import org.example.connection.Connect;
 import org.example.controller.excecao.MaioDeIdade;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -67,14 +66,54 @@ public class ValidarUser {
          }
 
          //método não testado
-         public static int validarDataNascimento (LocalDate dataNascimento) throws MaioDeIdade {
+         public static void validarDataNascimento (LocalDate dataNascimento) throws MaioDeIdade {
             LocalDate dataHoje = LocalDate.now();
 
              Period period = Period.between(dataNascimento, dataHoje);
              if (period.getYears() <=18) {
                  throw new MaioDeIdade("Você precisa ser maior de idade");
-             }else {
-                 return period.getYears();
              }
          }
+    public String userInfoByAlias(String email) {
+        String sql = "SELECT id, nomecompleto, cpf FROM \"user\" WHERE email=?";
+
+        String nome = "";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                nome = resultSet.getString("nomecompleto");
+                String cpf = resultSet.getString("cpf");
+                System.out.println("Informações da Conta:\n ID: " + id + " | CPF: " + cpf + " | Nome: " + nome + " | Email: " + email);
+            } else {
+                System.out.println("Usuário com o nome " + nome + " não encontrado.");
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    public Long getClienteId(String email) {
+        try {
+            String sql = "SELECT id FROM \"user\" WHERE email =?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, email);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getLong("id");
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Long.valueOf("Erro ao buscar id do cliente");
+        }
+    }
 }
