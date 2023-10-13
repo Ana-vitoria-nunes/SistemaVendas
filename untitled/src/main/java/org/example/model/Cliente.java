@@ -22,6 +22,14 @@ public class Cliente {
         this.id = id;
     }
 
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
     public String getNomeCompleto() {
         return nomeCompleto;
     }

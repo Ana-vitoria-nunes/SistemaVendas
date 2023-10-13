@@ -73,6 +73,31 @@ public class ValidarCartao {
         }
     }
 
+    public String cartaoInfoByEmail(Long idCliente) {
+        String sql = "SELECT id, nomeremetente, numerocartao, cvv, dataValidade, limitecartao FROM cartao WHERE idcliente = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setLong(1, idCliente);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                long id = resultSet.getLong("id");
+                String nome = resultSet.getString("nomeremetente");
+                String numero = resultSet.getString("numerocartao");
+                String cvv = resultSet.getString("cvv");
+                Date data = resultSet.getDate("datavalidade");
+                BigDecimal limite = resultSet.getBigDecimal("limitecartao");
+                System.out.println("\nSeus cartões:\n ID: " + id + " |Nome Remetente: " + nome + " |Nº cartão: " + numero + " |CVV: " + cvv + " |Limite: " + limite);
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
 
 
