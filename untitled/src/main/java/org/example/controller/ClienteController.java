@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.connection.Connect;
+import org.example.controller.excecao.MaioDeIdade;
 import org.example.controller.validação.ValidarEmail;
 import org.example.controller.validação.ValidarUser;
 
@@ -26,7 +27,7 @@ public class ClienteController {
         }
     }
 
-    public void adicionarUsuario(String nomeCompleto, LocalDate dataNascimento, String email, String senha, String cpf, String endereco, String telefone) {
+    public void adicionarUsuario(String nomeCompleto, LocalDate dataNascimento, String email, String senha, String cpf, String endereco, String telefone) throws MaioDeIdade {
 
         if (!validarUser.validarCamposObrigatoriosUser(nomeCompleto,email,senha,cpf,endereco,telefone)){
             System.out.println("Todos os campos do cliente devem ser preenchidos!");
@@ -131,10 +132,6 @@ public class ClienteController {
         }
         return "";
     }
-
-
-
-
 
 }
 
