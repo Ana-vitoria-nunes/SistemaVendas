@@ -9,7 +9,7 @@ public class Cliente {
     private String nomeCompleto;
     private String email;
     private String senha;
-    private LocalDate dataNascimento;
+    private Date dataNascimento;
     private String cpf;
     private String endereco;
     private String telefone;
@@ -22,11 +22,11 @@ public class Cliente {
         this.id = id;
     }
 
-    public LocalDate getDataNascimento() {
+    public Date getDataNascimento() {
         return dataNascimento;
     }
 
-    public void setDataNascimento(LocalDate dataNascimento) {
+    public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 

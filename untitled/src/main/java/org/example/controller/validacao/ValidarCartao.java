@@ -1,4 +1,4 @@
-package org.example.controller.validação;
+package org.example.controller.validacao;
 
 import org.example.connection.Connect;
 
@@ -7,39 +7,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ValidarCartao {
     private final Connection connection = Connect.fazerConexao();
 
     // review do métoo validar numero cartão
-    public boolean validarNumeroCartao(String numeroCartao) {
-    // Remover espaços em branco e traços (caso presentes) do número do cartão.
-    numeroCartao = numeroCartao.replaceAll("[ -]", "");
-
-    if (numeroCartao.length() != 16) {
-        return false;  // O número do cartão deve ter exatamente 16 dígitos.
-    }
-
-    int sum = 0;
-    boolean doubleDigit = false;
-
-    for (int i = numeroCartao.length() - 1; i >= 0; i--) {
-        int digit = Character.getNumericValue(numeroCartao.charAt(i));
-
-        if (doubleDigit) {
-            digit *= 2;
-            if (digit > 9) {
-                digit -= 9;
-            }
-        }
-
-        sum += digit;
-        doubleDigit = !doubleDigit;
-    }
-
-    return sum % 10 == 0;
-}
     public boolean validarCartao(Long id) {
         String sql = "SELECT COUNT(*) FROM cartao WHERE id=?";
 
@@ -65,14 +40,6 @@ public class ValidarCartao {
                 cvv != null && !cvv.isEmpty() &&
                 dataValidade != null && limiteCartao != null;
     }
-    public boolean validarLimitesValores(BigDecimal limiteCartao, BigDecimal valorTotalParcela) {
-        if (limiteCartao != null && valorTotalParcela != null) {
-            return limiteCartao.compareTo(valorTotalParcela) >= 0;
-        } else {
-            return false;
-        }
-    }
-
     public String cartaoInfoByEmail(Long idCliente) {
         String sql = "SELECT id, nomeremetente, numerocartao, cvv, dataValidade, limitecartao FROM cartao WHERE idcliente = ?";
 
@@ -98,7 +65,55 @@ public class ValidarCartao {
         }
         return "";
     }
+    public boolean validarNumeroCartaoCredito(String numeroCartao) {
+        numeroCartao = numeroCartao.replaceAll("[^0-9]", "");
 
+        int numDigitos = numeroCartao.length();
+        return numDigitos == 15 || numDigitos == 16;
+    }
+    public boolean validarNumeroCartaoLuhn(String numeroCartao) {
+        String numeroCartaoFormatado = numeroCartao.replaceAll("[^0-9]", "");
 
+        int sum = 0;
+        boolean doubleDigit = false;
+
+        for (int i = numeroCartaoFormatado.length() - 1; i >= 0; i--) {
+            int digit = Character.getNumericValue(numeroCartaoFormatado.charAt(i));
+
+            if (doubleDigit) {
+                digit *= 2;
+                if (digit > 9) {
+                    digit -= 9;
+                }
+            }
+
+            sum += digit;
+            doubleDigit = !doubleDigit;
+        }
+
+        return sum % 10 == 0;
+    }
+    public boolean verificarDataVencimentoCartao(Date dataVencimento) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
+            Date dataVencimentoDate = sdf.parse(sdf.format(dataVencimento));
+
+            Date dataAtual = new Date();
+
+            if (dataVencimentoDate.after(dataAtual)) {
+                return true;
+            }
+        } catch (ParseException e) {
+            e.getMessage();
+        }
+
+        return false;
+    }
+    public boolean verificarCodigoSegurancaCartao(String codigoSeguranca) {
+        if (codigoSeguranca.length() == 3 || codigoSeguranca.length() == 4) {
+            return codigoSeguranca.matches("\\d+");
+        }
+        return false;
+    }
 
 }

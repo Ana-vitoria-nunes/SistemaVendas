@@ -1,8 +1,8 @@
 package org.example.controller;
 
-import org.example.controller.validação.ValidarCartao;
-import org.example.controller.validação.ValidarData;
-import org.example.controller.validação.ValidarUser;
+import org.example.controller.validacao.ValidarCartao;
+import org.example.controller.validacao.ValidarData;
+import org.example.controller.validacao.ValidarUser;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -26,29 +26,37 @@ public class CartaoController {
     }
     public void adicionarCartao(Long idCliente, String nomeRemetente, String numeroCartao, String cvvCartao, Date dataDevalidade, BigDecimal limiteCartao) {
 
-        if (!validarCartao.validarCamposObrigatorios(nomeRemetente,numeroCartao,cvvCartao,dataDevalidade,limiteCartao)){
+        String numeroCartaoFormatado = numeroCartao.replaceAll("[^0-9]", "");
+        if (!validarCartao.validarCamposObrigatorios(nomeRemetente,numeroCartaoFormatado,cvvCartao,dataDevalidade,limiteCartao)){
             System.out.println("Todos os campos do cartão deve estar preenchidoa!");
             return;
         }
-
         if (!validarUser.validarUser(idCliente)){
             System.out.println("Esse cliente não existe no banco!");
             return;
         }
 
-        if (validarCartao.validarNumeroCartao(numeroCartao)) {
-            System.out.println("Número de cartão inválido!");
+        if (!validarCartao.validarNumeroCartaoCredito(numeroCartaoFormatado)) {
+            System.out.println("Está faltando dígitos no numero do cartão");
             return;
         }
 
-        if (validarData.validarDataValidade(dataDevalidade)){
-            System.out.println("Data do cartão é inválida!");
+        if (validarCartao.validarNumeroCartaoLuhn(numeroCartaoFormatado)) {
+            System.out.println("Número do cartão é invalido");
+            return;
+        }
+        if (!validarCartao.verificarDataVencimentoCartao(dataDevalidade)) {
+            System.out.println("Data de expiração do cartão é invalido");
+            return;
+        }
+        if (!validarCartao.verificarCodigoSegurancaCartao(cvvCartao)){
+            System.out.println("CVV inválido");
             return;
 
         }
 
         String sql = "INSERT INTO cartao (idcliente, nomeRemetente, NumeroCartao, cvv, dataValidade, limiteCartao) " +
-                "VALUES (" + idCliente+ ", '" + nomeRemetente + "', '" + numeroCartao + "', '" + cvvCartao + "', '" + dataDevalidade + "', " + limiteCartao + ")";
+                "VALUES (" + idCliente+ ", '" + nomeRemetente + "', '" + numeroCartaoFormatado + "', '" + cvvCartao + "', '" + dataDevalidade + "', " + limiteCartao + ")";
         try {
             statement.executeUpdate(sql);
             System.out.println("Cartão adicionado com sucesso!");
@@ -69,4 +77,5 @@ public class CartaoController {
             e.printStackTrace();
         }
     }
+
 }

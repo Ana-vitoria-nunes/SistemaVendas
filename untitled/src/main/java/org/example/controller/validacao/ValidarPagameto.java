@@ -1,9 +1,6 @@
-package org.example.controller.validação;
+package org.example.controller.validacao;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ValidarPagameto {
     public boolean validarCamposObrigatoriosPagamento(Long idCartao, Integer parcelas, BigDecimal valorTotalParcela, BigDecimal valorTotalEmprestimo, String status) {

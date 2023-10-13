@@ -1,7 +1,7 @@
 package org.example.controller;
 
-import org.example.controller.validação.ValidarCartao;
-import org.example.controller.validação.ValidarPagameto;
+import org.example.controller.validacao.ValidarCartao;
+import org.example.controller.validacao.ValidarPagameto;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;

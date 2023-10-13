@@ -1,4 +1,4 @@
-package org.example.controller.validação;
+package org.example.controller.validacao;
 
 public class ValidarEmail {
     public boolean validarEmail(String email) {
