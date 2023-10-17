@@ -16,7 +16,7 @@ public class ValidarCartao {
 
     // review do métoo validar numero cartão
     public boolean validarCartao(Long id) {
-        String sql = "SELECT COUNT(*) FROM cartao WHERE id=?";
+        String sql = "SELECT COUNT(*) FROM cartao WHERE idCartao=?";
 
         try {
             assert connection != null;
@@ -41,7 +41,7 @@ public class ValidarCartao {
                 dataValidade != null && limiteCartao != null;
     }
     public String cartaoInfoByEmail(Long idCliente) {
-        String sql = "SELECT id, nomeremetente, numerocartao, cvv, dataValidade, limitecartao FROM cartao WHERE idcliente = ?";
+        String sql = "SELECT idCartao, nomeremetente, numerocartao, cvv, dataValidade, limitecartao FROM cartao WHERE idcliente = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -49,7 +49,7 @@ public class ValidarCartao {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                long id = resultSet.getLong("id");
+                long id = resultSet.getLong("idCartao");
                 String nome = resultSet.getString("nomeremetente");
                 String numero = resultSet.getString("numerocartao");
                 String cvv = resultSet.getString("cvv");

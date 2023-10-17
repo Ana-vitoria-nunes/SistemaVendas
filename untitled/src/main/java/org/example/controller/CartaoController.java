@@ -16,7 +16,6 @@ public class CartaoController {
     private Statement statement;
     ValidarCartao validarCartao=new ValidarCartao();
     ValidarUser validarUser=new ValidarUser();
-    ValidarData validarData=new ValidarData();
     public CartaoController() {
         try {
             statement = Objects.requireNonNull(fazerConexao()).createStatement();
@@ -28,7 +27,7 @@ public class CartaoController {
 
         String numeroCartaoFormatado = numeroCartao.replaceAll("[^0-9]", "");
         if (!validarCartao.validarCamposObrigatorios(nomeRemetente,numeroCartaoFormatado,cvvCartao,dataDevalidade,limiteCartao)){
-            System.out.println("Todos os campos do cartão deve estar preenchidoa!");
+            System.out.println("Todos os campos do cartão deve estar preenchidos!");
             return;
         }
         if (!validarUser.validarUser(idCliente)){
@@ -41,7 +40,7 @@ public class CartaoController {
             return;
         }
 
-        if (validarCartao.validarNumeroCartaoLuhn(numeroCartaoFormatado)) {
+        if (!validarCartao.validarNumeroCartaoLuhn(numeroCartaoFormatado)) {
             System.out.println("Número do cartão é invalido");
             return;
         }
@@ -65,13 +64,15 @@ public class CartaoController {
         }
     }
     public void deletarCartao(Long cartaoId) {
-        String sql = "DELETE FROM cartao WHERE id = " + cartaoId;
+        if (!validarCartao.validarCartao(cartaoId)) {
+            System.out.println("Cartão com esse Id não encontrado!");
+        }
+        String sql = "DELETE FROM cartao WHERE idCartao = " + cartaoId;
+
         try {
             int rowsAffected = statement.executeUpdate(sql);
             if (rowsAffected > 0) {
                 System.out.println("Cartão excluído com sucesso!");
-            } else {
-                System.out.println("Nenhum cartão encontrado com o ID especificado.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
