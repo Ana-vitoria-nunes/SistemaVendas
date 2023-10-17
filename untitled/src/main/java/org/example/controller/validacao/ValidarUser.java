@@ -36,9 +36,8 @@ public class ValidarUser {
         String sql = "SELECT COUNT(*) FROM cliente WHERE idCliente=?";
 
         try {
-            assert connection != null;
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, Math.toIntExact(id)); // caso der algum bug pode ser erro
+            preparedStatement.setInt(1, Math.toIntExact(id));
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             int count = resultSet.getInt(1);
@@ -52,19 +51,19 @@ public class ValidarUser {
 
         return false;
     }
-    public boolean validarCamposObrigatoriosUser(String nomeCompleto, String email, String senha, String cpf, String endereco, String telefone) {
-        return nomeCompleto != null && !nomeCompleto.isEmpty() &&
 
+
+    public boolean validarCamposObrigatoriosUser(String nomeCompleto, String email, String senha, String cpf, String endereco,String telefone) {
+        return nomeCompleto != null && !nomeCompleto.isEmpty() &&
                 email != null && !email.isEmpty() &&
                 senha != null && !senha.isEmpty() &&
                 cpf != null && !cpf.isEmpty() &&
                 endereco != null && !endereco.isEmpty() &&
                 telefone != null && !telefone.isEmpty();
-        // lembrar que talvez a excessão ja esteja validando
-         }
+    }
 
          //método não testado
-         public static boolean validarDataNascimento(Date dataNascimento){
+         public boolean validarDataNascimento(Date dataNascimento){
              Date dataHoje = new Date(); // Data atual
 
              // Calculando a idade

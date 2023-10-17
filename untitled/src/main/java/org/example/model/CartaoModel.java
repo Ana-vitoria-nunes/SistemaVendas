@@ -4,21 +4,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class CartaoModel {
-    private Long id;
     private Long idCliente;
     private String nomeRemetente;
     private String numeroCartao;
     private String cvv;
     private Date dataValidade;
     private BigDecimal limiteCartao;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getIdCliente() {
         return idCliente;
